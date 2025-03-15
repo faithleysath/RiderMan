@@ -126,8 +126,8 @@ import {
   f7ListButton,
 } from "framework7-vue";
 import { getDevice } from "framework7/lite-bundle";
-import capacitorApp from "./capacitor-app";
 import routes from "./routes/router";
+import tauriApp from "./tauri-app";
 
 const device = getDevice();
 // Framework7 Parameters
@@ -137,17 +137,6 @@ const f7params = {
   id: "com.example.app", // App bundle ID
   // App routes
   routes: routes,
-
-  // Input settings
-  input: {
-    scrollIntoViewOnFocus: device.capacitor,
-    scrollIntoViewCentered: device.capacitor,
-  },
-  // Capacitor Statusbar settings
-  statusbar: {
-    iosOverlaysWebView: true,
-    androidOverlaysWebView: false,
-  },
 };
 // Login screen data
 const username = ref("");
@@ -163,11 +152,8 @@ const alertLoginData = () => {
 };
 onMounted(() => {
   f7ready(() => {
-    // Init capacitor APIs (see capacitor-app.js)
-    if (device.capacitor) {
-      capacitorApp.init(f7);
-    }
-    // Call F7 APIs here
+    // 初始化 Tauri 应用功能
+    tauriApp.init(f7);
   });
 });
 </script>
