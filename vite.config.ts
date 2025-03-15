@@ -1,13 +1,23 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import Unocss from "unocss/vite";
+import viteVConsole from 'vite-plugin-vconsole';
+import path from 'path';
 
-// @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
-export default defineConfig(async () => ({
-  plugins: [vue(), Unocss()],
+export default defineConfig(async ({ mode }) => ({
+  plugins: [vue(), Unocss(), viteVConsole({
+           entry: path.resolve('src/main.ts'),
+           localEnabled: true,
+           enabled: true,
+           config: {
+             maxLogNumber: 1000,
+             // theme: 'dark'
+           }
+         })
+  ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
