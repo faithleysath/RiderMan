@@ -6,6 +6,8 @@ import urPK from "./lang/ur-PK.json";
 type MessageSchema = typeof enUS;
 
 const i18n = createI18n<[MessageSchema], "en-US" | "ur-PK">({
+  legacy: false,
+  globalInjection: true,
   locale: "en-US",
   fallbackLocale: "en-US",
   messages: {

@@ -16,7 +16,7 @@ Framework7.use(Framework7Vue);
 const app = createApp(App)
 
 // Register All Framework7 Vue components
-// registerComponents(app);
+registerComponents(app);
 
 app.use(createPinia())
 
