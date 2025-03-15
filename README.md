@@ -5,7 +5,35 @@
 - Tauri
 
 ## Tauri插件
-### notification
+#### clipboard-manager
+使用剪贴板插件读取和写入系统剪贴板。
+```javascript
+import { writeText, readText } from '@tauri-apps/plugin-clipboard-manager';
+
+// 将内容写到剪贴板
+await writeText('Tauri is awesome!');
+
+// 从剪贴板读取内容
+const content = await readText();
+console.log(content);
+// Prints "Tauri is awesome!" to the console
+```
+#### log
+为你的 Tauri 应用程序配置日志记录。
+```javascript
+import { trace, info, error, attachConsole } from '@tauri-apps/plugin-log';
+
+// 启用 TargetKind::Webview 后，这个函数将把日志打印到浏览器控制台
+const detach = await attachConsole();
+
+trace('Trace');
+info('Info');
+error('Error');
+
+// 将浏览器控制台与日志流分离
+detach();
+```
+#### notification
 使用通知提示插件以向你的用户发送原生通知。
 ```javascript
 import {
@@ -65,4 +93,52 @@ import { message } from '@tauri-apps/plugin-dialog';
 
 // Shows message
 await message('File not found', { title: 'Tauri', kind: 'error' });
+```
+#### store
+简单、持久的键值存储。
+```javascript
+import { Store } from '@tauri-apps/plugin-store';
+
+// Store 会在 JavaScript 绑定时自动加载。
+const store = new Store('store.bin');
+
+// 设置一个值。
+await store.set('some-key', { value: 5 });
+
+// 获取一个值。
+const val = await store.get('some-key');
+console.log(val); // { value: 5 }
+
+// 您可以在进行更改后手动保存存储
+// 否则如上所述，它将在正常退出时保存。
+await store.save();
+```
+#### geolocation
+This plugin provides APIs for getting and tracking the device's current position, including information about altitude, heading, and speed (if available).
+```javascript
+import {
+  checkPermissions,
+  requestPermissions,
+  getCurrentPosition,
+  watchPosition
+} from '@tauri-apps/plugin-geolocation'
+
+let permissions = await checkPermissions()
+if (
+  permissions.location === 'prompt'
+  || permissions.location === 'prompt-with-rationale'
+) {
+  permissions = await requestPermissions(['location'])
+}
+
+if (permissions.location === 'granted') {
+  const pos = await getCurrentPosition()
+
+  await watchPosition(
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+    (pos) => {
+      console.log(pos)
+    }
+  )
+}
 ```
