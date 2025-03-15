@@ -1,11 +1,29 @@
 # 骑马侠
+骑马侠是一款面向骑马爱好者的共享马匹平台应用，用户可以通过该应用快速找到附近的共享马匹（电动助力车），进行租赁、骑行和归还。应用采用骑马为主题的专业术语，为用户创造沉浸式的骑马体验。
+
+## 应用主题化术语对应
+
+| 原术语 | 骑马侠术语 |
+|-------|----------|
+| 共享单车/电动车 | 共享马匹 |
+| 助力车(carmodel_id=2) | 骏马 |
+| 单车(carmodel_id=1) | (不适配) |
+| 租车 | 租马 |
+| 还车 | 还马 |
+| 解锁 | 上马 |
+| 临时锁车 | 临时下马 |
+| 电量 | 体力值 |
+| 里程 | 奔跑里程 |
+| 余额 | 马币 |
+| 积分 | 马术积分 |
+
 
 ## 技术栈
 - Vue3+Framework7+Pinia+TS
 - Tauri
 
 ## Tauri插件
-#### clipboard-manager
+### clipboard-manager
 使用剪贴板插件读取和写入系统剪贴板。
 ```javascript
 import { writeText, readText } from '@tauri-apps/plugin-clipboard-manager';
@@ -18,7 +36,7 @@ const content = await readText();
 console.log(content);
 // Prints "Tauri is awesome!" to the console
 ```
-#### log
+### log
 为你的 Tauri 应用程序配置日志记录。
 ```javascript
 import { trace, info, error, attachConsole } from '@tauri-apps/plugin-log';
@@ -33,7 +51,7 @@ error('Error');
 // 将浏览器控制台与日志流分离
 detach();
 ```
-#### notification
+### notification
 使用通知提示插件以向你的用户发送原生通知。
 ```javascript
 import {
@@ -94,7 +112,7 @@ import { message } from '@tauri-apps/plugin-dialog';
 // Shows message
 await message('File not found', { title: 'Tauri', kind: 'error' });
 ```
-#### store
+### store
 简单、持久的键值存储。
 ```javascript
 import { Store } from '@tauri-apps/plugin-store';
@@ -113,7 +131,7 @@ console.log(val); // { value: 5 }
 // 否则如上所述，它将在正常退出时保存。
 await store.save();
 ```
-#### geolocation
+### geolocation
 This plugin provides APIs for getting and tracking the device's current position, including information about altitude, heading, and speed (if available).
 ```javascript
 import {
@@ -140,5 +158,20 @@ if (permissions.location === 'granted') {
       console.log(pos)
     }
   )
+}
+```
+pos对象结构
+```javascript
+pos = {
+    coords: {
+        latitude: number,    // 纬度
+        longitude: number,   // 经度
+        accuracy: number,    // 精确度(米)
+        altitude: number,    // 海拔
+        altitudeAccuracy: number,  // 海拔精确度
+        speed: number,      // 速度
+        heading: number     // 方向角度(0-360)
+    },
+    timestamp: number      // 时间戳
 }
 ```

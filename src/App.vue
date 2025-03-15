@@ -1,160 +1,173 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import { invoke } from "@tauri-apps/api/core";
-
-const greetMsg = ref("");
-const name = ref("");
-
-async function greet() {
-  // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-  greetMsg.value = await invoke("greet", { name: name.value });
-}
-</script>
-
 <template>
-  <main class="container">
-    <h1>Welcome to Tauri + Vue</h1>
+  <f7-app v-bind="f7params">
+    <!-- Left panel with cover effect-->
+    <f7-panel left cover dark>
+      <f7-view>
+        <f7-page>
+          <f7-navbar title="Left Panel"></f7-navbar>
+          <f7-block>Left panel content goes here</f7-block>
+        </f7-page>
+      </f7-view>
+    </f7-panel>
 
-    <div class="row">
-      <a href="https://vitejs.dev" target="_blank">
-        <img src="/vite.svg" class="logo vite" alt="Vite logo" />
-      </a>
-      <a href="https://tauri.app" target="_blank">
-        <img src="/tauri.svg" class="logo tauri" alt="Tauri logo" />
-      </a>
-      <a href="https://vuejs.org/" target="_blank">
-        <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-      </a>
-    </div>
-    <p>Click on the Tauri, Vite, and Vue logos to learn more.</p>
+    <!-- Right panel with reveal effect-->
+    <f7-panel right reveal dark>
+      <f7-view>
+        <f7-page>
+          <f7-navbar title="Right Panel"></f7-navbar>
+          <f7-block>Right panel content goes here</f7-block>
+        </f7-page>
+      </f7-view>
+    </f7-panel>
 
-    <form class="row" @submit.prevent="greet">
-      <input id="greet-input" v-model="name" placeholder="Enter a name..." />
-      <button type="submit">Greet</button>
-    </form>
-    <p>{{ greetMsg }}</p>
-  </main>
+    <!-- Views/Tabs container -->
+    <f7-views tabs class="safe-areas">
+      <!-- Tabbar for switching views-tabs -->
+      <f7-toolbar tabbar labels bottom>
+        <f7-link tab-link="#view-home" tab-link-active>
+          <i class="i-tabler-home w-6 h-6" />
+          <span class="normal-case text-sm">Home</span>
+        </f7-link>
+        <f7-link tab-link="#view-about">
+          <i class="i-tabler-user w-6 h-6" />
+          <span class="normal-case text-sm">About</span>
+        </f7-link>
+        <f7-link tab-link="#view-settings">
+          <i class="i-tabler-settings w-6 h-6" />
+          <span class="normal-case text-sm">Settings</span>
+        </f7-link>
+      </f7-toolbar>
+
+      <!-- Your main view/tab, should have "view-main" class. It also has "tab-active" class -->
+      <f7-view id="view-home" main tab tab-active url="/"></f7-view>
+
+      <!-- About View -->
+      <f7-view id="view-about" name="about" tab url="/about/"></f7-view>
+
+      <!-- Settings View -->
+      <f7-view
+        id="view-settings"
+        name="settings"
+        tab
+        url="/settings/"
+      ></f7-view>
+    </f7-views>
+
+    <!-- Popup -->
+    <f7-popup id="my-popup">
+      <f7-view>
+        <f7-page>
+          <f7-navbar title="Popup">
+            <f7-nav-right>
+              <f7-link popup-close>Close</f7-link>
+            </f7-nav-right>
+          </f7-navbar>
+          <f7-block>
+            <p>Popup content goes here.</p>
+          </f7-block>
+        </f7-page>
+      </f7-view>
+    </f7-popup>
+
+    <f7-login-screen id="my-login-screen">
+      <f7-view>
+        <f7-page login-screen>
+          <f7-login-screen-title>Login</f7-login-screen-title>
+          <f7-list form>
+            <f7-list-input
+              type="text"
+              name="username"
+              placeholder="Your username"
+              v-model:value="username"
+            ></f7-list-input>
+            <f7-list-input
+              type="password"
+              name="password"
+              placeholder="Your password"
+              v-model:value="password"
+            ></f7-list-input>
+          </f7-list>
+          <f7-list>
+            <f7-list-button
+              title="Sign In"
+              @click="alertLoginData"
+            ></f7-list-button>
+            <f7-block-footer>
+              Some text about login information.<br />Click "Sign In" to close
+              Login Screen
+            </f7-block-footer>
+          </f7-list>
+        </f7-page>
+      </f7-view>
+    </f7-login-screen>
+  </f7-app>
 </template>
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import {
+  f7,
+  f7ready,
+  f7App,
+  f7Page,
+  f7View,
+  f7Panel,
+  f7Block,
+  f7BlockFooter,
+  f7List,
+  f7LoginScreen,
+  f7LoginScreenTitle,
+  f7Link,
+  f7Navbar,
+  f7NavRight,
+  f7Toolbar,
+  f7Views,
+  f7Popup,
+  f7ListInput,
+  f7ListButton,
+} from "framework7-vue";
+import { getDevice } from "framework7/lite-bundle";
+import capacitorApp from "./capacitor-app";
+import routes from "./routes/router";
 
-<style scoped>
-.logo.vite:hover {
-  filter: drop-shadow(0 0 2em #747bff);
-}
+const device = getDevice();
+// Framework7 Parameters
+const f7params = {
+  name: "F7-Vue Typescript", // App name
+  theme: "auto", // Automatic theme detection
+  id: "com.example.app", // App bundle ID
+  // App routes
+  routes: routes,
 
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #249b73);
-}
+  // Input settings
+  input: {
+    scrollIntoViewOnFocus: device.capacitor,
+    scrollIntoViewCentered: device.capacitor,
+  },
+  // Capacitor Statusbar settings
+  statusbar: {
+    iosOverlaysWebView: true,
+    androidOverlaysWebView: false,
+  },
+};
+// Login screen data
+const username = ref("");
+const password = ref("");
 
-</style>
-<style>
-:root {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-.container {
-  margin: 0;
-  padding-top: 10vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: 0.75s;
-}
-
-.logo.tauri:hover {
-  filter: drop-shadow(0 0 2em #24c8db);
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-h1 {
-  text-align: center;
-}
-
-input,
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  color: #0f0f0f;
-  background-color: #ffffff;
-  transition: border-color 0.25s;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-button {
-  cursor: pointer;
-}
-
-button:hover {
-  border-color: #396cd8;
-}
-button:active {
-  border-color: #396cd8;
-  background-color: #e8e8e8;
-}
-
-input,
-button {
-  outline: none;
-}
-
-#greet-input {
-  margin-right: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
-
-  a:hover {
-    color: #24c8db;
-  }
-
-  input,
-  button {
-    color: #ffffff;
-    background-color: #0f0f0f98;
-  }
-  button:active {
-    background-color: #0f0f0f69;
-  }
-}
-
-</style>
+const alertLoginData = () => {
+  f7.dialog.alert(
+    "Username: " + username.value + "<br>Password: " + password.value,
+    () => {
+      f7.loginScreen.close();
+    }
+  );
+};
+onMounted(() => {
+  f7ready(() => {
+    // Init capacitor APIs (see capacitor-app.js)
+    if (device.capacitor) {
+      capacitorApp.init(f7);
+    }
+    // Call F7 APIs here
+  });
+});
+</script>
