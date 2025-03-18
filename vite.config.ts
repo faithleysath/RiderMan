@@ -3,12 +3,13 @@ import vue from "@vitejs/plugin-vue";
 import Unocss from "unocss/vite";
 import viteVConsole from 'vite-plugin-vconsole';
 import path from 'path';
+import { DevTools } from '@guiiai/core';
 
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async ({ mode }) => ({
-  plugins: [vue(), Unocss(), viteVConsole({
+  plugins: [vue(), Unocss(), DevTools(), viteVConsole({
            entry: path.resolve('src/main.ts'),
            localEnabled: true,
            enabled: true,
