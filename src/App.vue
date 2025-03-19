@@ -1,62 +1,31 @@
 <template>
     <f7-app v-bind="f7params">
-        <f7-navbar>
-            <f7-nav-title>方位指示器</f7-nav-title>
-        </f7-navbar>
+        <f7-views tabs>
+            <f7-toolbar tabbar bottom>
+                <f7-link tab-link="#home" tab-link-active>
+                    <i class="i-tabler-home w-6 h-6"></i>
+                    <span class="ta">主页</span>
+                </f7-link>
+                <f7-link tab-link="#profile">
+                    <i class="i-tabler-user w-6 h-6"></i>
+                    <span class="normal-case text-sm">马术中心</span>
+                </f7-link>
+            </f7-toolbar>
 
-        <f7-page>
-                <compass :distance="currentDistance" :angle="currentAngle" />
-                <!-- 测试控制器 -->
-                <f7-block-title>控制面板</f7-block-title>
-                <f7-list strong-ios dividers-ios inset-ios>
-                    <f7-list-input
-                        outline
-                        label="距离"
-                        floating-label
-                        type="number"
-                        placeholder="输入距离（米）"
-                        clear-button
-                        v-model:value="currentDistance"
-                    >
-                        <template #media>
-                            <f7-icon icon="ruler" />
-                        </template>
-                    </f7-list-input>
+            <f7-view id="home" main tab tab-active url="/"></f7-view>
+            <f7-view id="profile" name="profile" tab url="/profile/"></f7-view>
+        </f7-views>
 
-                    <f7-list-input
-                        outline
-                        label="角度"
-                        floating-label
-                        type="number"
-                        placeholder="输入角度 (-180° 到 180°)"
-                        clear-button
-                        :min="-180"
-                        :max="180"
-                        v-model:value="currentAngle"
-                    >
-                        <template #media>
-                            <f7-icon icon="compass" />
-                        </template>
-                    </f7-list-input>
-                </f7-list>
-        </f7-page>
     </f7-app>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { 
-    f7, f7ready, f7App, f7Navbar, f7NavTitle, 
-    f7Page, f7BlockTitle, f7List, f7ListInput,
-    f7Icon
+    f7, f7ready, f7App, f7Views, f7Toolbar, f7Link, f7View
 } from 'framework7-vue';
 import routes from './routes/router';
 import tauriApp from './tauri-app';
-import Compass from './components/compass.vue';
-
-// 测试数据
-const currentDistance = ref(100);
-const currentAngle = ref(0);
 
 const f7params = {
     name: '骑马侠',
@@ -71,8 +40,3 @@ onMounted(() => {
     })
 })
 </script>
-
-<style>
-
-
-</style>
