@@ -2,6 +2,9 @@
     <f7-page name="debug">
         <f7-navbar title="SDK调试">
             <f7-nav-right>
+                <f7-link icon-only @click="locationPopoverOpened = true">
+                    <i class="i-tabler-location w-6 h-6"></i>
+                </f7-link>
                 <f7-link icon-only @click="openTokenPopover">
                     <i class="i-tabler-key-off w-6 h-6"></i>
                 </f7-link>
@@ -22,6 +25,33 @@
                 @input="carNumber = $event.target.value"
             ></f7-list-input>
         </f7-list>
+
+        <!-- 定位设置弹窗 -->
+        <f7-popover :opened="locationPopoverOpened" @popover:closed="locationPopoverOpened = false">
+            <div class="p-4 w-80">
+                <div class="text-sm mb-2">设置位置</div>
+                <f7-list no-hairlines>
+                    <f7-list-item>
+                        <f7-input
+                            type="number"
+                            placeholder="纬度"
+                            :value="latitude"
+                            @input="latitude = parseFloat($event.target.value)"
+                        ></f7-input>
+                    </f7-list-item>
+                    <f7-list-item>
+                        <f7-input
+                            type="number" 
+                            placeholder="经度"
+                            :value="longitude"
+                            @input="longitude = parseFloat($event.target.value)"
+                        ></f7-input>
+                    </f7-list-item>
+                    <f7-list-button @click="useCurrentLocation">自动定位</f7-list-button>
+                    <f7-list-button @click="updateLocation">确定</f7-list-button>
+                </f7-list>
+            </div>
+        </f7-popover>
 
         <!-- Token设置弹窗 -->
         <f7-popover :opened="tokenPopoverOpened" @popover:closed="tokenPopoverOpened = false">
@@ -147,6 +177,11 @@ import {
     f7PageContent
 } from 'framework7-vue';
 import { SevenPace } from '../sdk';
+import {
+    checkPermissions,
+    requestPermissions,
+    getCurrentPosition
+} from '@tauri-apps/plugin-geolocation';
 
 const client = new SevenPace();
 const token = ref('');
@@ -157,9 +192,57 @@ const smsButtonDisabled = ref(false);
 const countdown = ref(0);
 const tokenPopoverOpened = ref(false);
 const loginSheetOpened = ref(false);
+const locationPopoverOpened = ref(false);
+const latitude = ref(32.205375942712834);
+const longitude = ref(118.70762235331449);
 
 const openTokenPopover = () => {
     tokenPopoverOpened.value = true;
+};
+
+// 定位相关方法
+const useCurrentLocation = async () => {
+    let permissions = await checkPermissions();
+    if (
+        permissions.location === 'prompt' ||
+        permissions.location === 'prompt-with-rationale'
+    ) {
+        permissions = await requestPermissions(['location']);
+    }
+
+    if (permissions.location === 'granted') {
+        try {
+            const pos = await getCurrentPosition();
+            latitude.value = pos.coords.latitude;
+            longitude.value = pos.coords.longitude;
+            f7.toast.show({
+                text: '已获取当前位置',
+                position: 'center',
+                closeTimeout: 2000,
+            });
+        } catch (err) {
+            f7.toast.show({
+                text: '获取位置失败: ' + err,
+                position: 'center',
+                closeTimeout: 2000,
+            });
+        }
+    } else {
+        f7.toast.show({
+            text: '未授予位置权限',
+            position: 'center',
+            closeTimeout: 2000,
+        });
+    }
+};
+
+const updateLocation = () => {
+    locationPopoverOpened.value = false;
+    f7.toast.show({
+        text: '位置已更新',
+        position: 'center',
+        closeTimeout: 2000,
+    });
 };
 
 // 倒计时函数
@@ -260,7 +343,7 @@ const getUserInfo = async () => {
 };
 
 const getSurroundingCars = async () => {
-    const [success, cars] = await client.getSurroundingCars(118.70762235331449, 32.205375942712834);
+    const [success, cars] = await client.getSurroundingCars(longitude.value, latitude.value);
     showResult(success, cars);
 };
 
