@@ -18,6 +18,7 @@
     "geolocation:allow-clear-watch",
     "geolocation:allow-get-current-position",
     "geolocation:allow-request-permissions",
-    "geolocation:allow-watch-position"
+    "geolocation:allow-watch-position",
+    "http:default"
   ]
 }

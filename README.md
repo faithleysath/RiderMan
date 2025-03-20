@@ -175,3 +175,31 @@ pos = {
     timestamp: number      // 时间戳
 }
 ```
+### http
+Make HTTP requests with the http plugin.
+#### 1.Configure the allowed URLs
+src-tauri/capabilities/default.json
+```json
+{
+  "permissions": [
+    {
+      "identifier": "http:default",
+      "allow": [{ "url": "https://*.tauri.app" }],
+      "deny": [{ "url": "https://private.tauri.app" }]
+    }
+  ]
+}
+```
+
+#### 2.Send a request
+The fetch method tries to be as close and compliant to the fetch Web API as possible.
+```javascript
+import { fetch } from '@tauri-apps/plugin-http';
+
+// Send a GET request
+const response = await fetch('http://test.tauri.app/data.json', {
+  method: 'GET',
+});
+console.log(response.status); // e.g. 200
+console.log(response.statusText); // e.g. "OK"
+```
