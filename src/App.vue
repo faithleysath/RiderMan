@@ -10,10 +10,15 @@
                     <i class="i-tabler-user w-6 h-6"></i>
                     <span class="normal-case text-sm">马术中心</span>
                 </f7-link>
+                <f7-link tab-link="#debug">
+                    <i class="i-tabler-bug w-6 h-6"></i>
+                    <span class="normal-case text-sm">调试</span>
+                </f7-link>
             </f7-toolbar>
 
             <f7-view id="home" main tab tab-active url="/"></f7-view>
             <f7-view id="profile" name="profile" tab url="/profile/"></f7-view>
+            <f7-view id="debug" name="debug" tab url="/debug/"></f7-view>
         </f7-views>
 
     </f7-app>
