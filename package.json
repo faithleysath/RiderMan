@@ -21,6 +21,7 @@
     "@tauri-apps/plugin-store": "~2",
     "framework7": "^8.3.4",
     "framework7-vue": "^8.3.4",
+    "jwt-decode": "^4.0.0",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
     "vue-i18n": "^11.1.2"
