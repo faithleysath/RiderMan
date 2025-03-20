@@ -1,42 +1,15 @@
 <template>
     <f7-page name="debug">
-        <f7-navbar title="SDK调试" />
-        
-        <!-- Token设置 -->
-        <f7-block-title>Token设置</f7-block-title>
-        <f7-list inline-labels no-hairlines-md>
-            <f7-list-input
-                label="Token"
-                type="textarea"
-                placeholder="输入JWT Token"
-                :value="token"
-                @input="updateToken"
-            ></f7-list-input>
-        </f7-list>
-        
-        <!-- 验证码登录 -->
-        <f7-block-title>验证码登录</f7-block-title>
-        <f7-list inline-labels no-hairlines-md>
-            <f7-list-input
-                label="手机号"
-                type="tel"
-                placeholder="输入手机号"
-                :value="phone"
-                @input="phone = $event.target.value"
-            ></f7-list-input>
-            <f7-list-item>
-                <f7-input
-                    type="text"
-                    placeholder="验证码"
-                    :value="code"
-                    @input="code = $event.target.value"
-                ></f7-input>
-                <f7-button @click="getSmsCode" :disabled="smsButtonDisabled">
-                    {{ smsButtonText }}
-                </f7-button>
-            </f7-list-item>
-            <f7-list-button @click="login">登录</f7-list-button>
-        </f7-list>
+        <f7-navbar title="SDK调试">
+            <f7-nav-right>
+                <f7-link icon-only @click="openTokenPopover">
+                    <i class="i-tabler-key-off w-6 h-6"></i>
+                </f7-link>
+                <f7-link icon-only @click="loginSheetOpened = true">
+                    <i class="i-tabler-message-2-code w-6 h-6"></i>
+                </f7-link>
+            </f7-nav-right>
+        </f7-navbar>
 
         <!-- 车辆操作 -->
         <f7-block-title>车辆操作</f7-block-title>
@@ -50,23 +23,100 @@
             ></f7-list-input>
         </f7-list>
 
-        <f7-block-title>API测试</f7-block-title>
-        <f7-block>
-            <f7-list>
-                <f7-list-button @click="checkAuthority">检查权限</f7-list-button>
-                <f7-list-button @click="getUserInfo">获取用户信息</f7-list-button>
-                <f7-list-button @click="getSurroundingCars">获取周围车辆</f7-list-button>
-                <f7-list-button @click="getCarInfo">查看车辆信息</f7-list-button>
-                <f7-list-button @click="orderCar">下单</f7-list-button>
-                <f7-list-button @click="unlockCar">解锁</f7-list-button>
-                <f7-list-button @click="temporaryLockCar">临时锁车</f7-list-button>
-                <f7-list-button @click="backCar">还车</f7-list-button>
-                <f7-list-button @click="currentCyclingOrder">获取当前订单</f7-list-button>
-                <f7-list-button @click="payWithBalance">余额支付</f7-list-button>
-                <f7-list-button @click="signin">签到</f7-list-button>
-            </f7-list>
-        </f7-block>
+        <!-- Token设置弹窗 -->
+        <f7-popover :opened="tokenPopoverOpened" @popover:closed="tokenPopoverOpened = false">
+            <div class="p-4 w-80">
+                <div class="text-sm mb-2">设置Token</div>
+                <f7-list no-hairlines>
+                    <f7-list-input
+                        type="textarea"
+                        placeholder="输入JWT Token"
+                        :value="token"
+                        @input="updateToken"
+                        resizable
+                    ></f7-list-input>
+                </f7-list>
+            </div>
+        </f7-popover>
 
+        <!-- 验证码登录Sheet -->
+        <f7-sheet
+            :opened="loginSheetOpened"
+            @sheet:closed="loginSheetOpened = false"
+            class="h-80"
+            swipe-to-close
+            backdrop
+        >
+            <f7-page-content>
+                <div class="px-4 py-2">
+                    <f7-list no-hairlines>
+                        <f7-list-input
+                            label="手机号"
+                            type="tel"
+                            placeholder="输入手机号"
+                            :value="phone"
+                            @input="phone = $event.target.value"
+                        ></f7-list-input>
+                        <f7-list-item>
+                            <f7-input
+                                type="text"
+                                placeholder="验证码"
+                                :value="code"
+                                @input="code = $event.target.value"
+                            ></f7-input>
+                            <f7-button slot="after" @click="getSmsCode" :disabled="smsButtonDisabled">
+                                {{ smsButtonText }}
+                            </f7-button>
+                        </f7-list-item>
+                        <f7-list-button @click="handleLogin">登录</f7-list-button>
+                    </f7-list>
+                </div>
+            </f7-page-content>
+        </f7-sheet>
+
+        <!-- 功能区域 -->
+        <div class="px-4 space-y-4">
+            <!-- 用户相关API -->
+            <div>
+                <div class="text-sm opacity-60 mb-2">用户操作</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <f7-button @click="checkAuthority" small>检查权限</f7-button>
+                    <f7-button @click="getUserInfo" small>获取信息</f7-button>
+                    <f7-button @click="signin" small>签到</f7-button>
+                </div>
+            </div>
+
+            <!-- 车辆相关API -->
+            <div>
+                <div class="text-sm opacity-60 mb-2">车辆查询</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <f7-button @click="getSurroundingCars" small>周围车辆</f7-button>
+                    <f7-button @click="getCarInfo" small>车辆信息</f7-button>
+                </div>
+            </div>
+
+            <!-- 订单相关API -->
+            <div>
+                <div class="text-sm opacity-60 mb-2">订单操作</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <f7-button @click="orderCar" small>下单</f7-button>
+                    <f7-button @click="currentCyclingOrder" small>获取订单</f7-button>
+                    <f7-button @click="payWithBalance" small>支付</f7-button>
+                </div>
+            </div>
+
+            <!-- 骑行控制 -->
+            <div>
+                <div class="text-sm opacity-60 mb-2">骑行控制</div>
+                <div class="grid grid-cols-3 gap-2">
+                    <f7-button @click="unlockCar" small>解锁</f7-button>
+                    <f7-button @click="temporaryLockCar" small>临时锁车</f7-button>
+                    <f7-button @click="backCar" small>还车</f7-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结果显示 -->
         <f7-block>
             <div class="space-y-2">
                 <div class="font-bold">结果：</div>
@@ -78,7 +128,24 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { f7, f7Page, f7Navbar, f7BlockTitle, f7List, f7ListInput, f7ListItem, f7ListButton, f7Block, f7Input } from 'framework7-vue';
+import {
+    f7,
+    f7Page,
+    f7Navbar,
+    f7NavRight,
+    f7Link,
+    f7BlockTitle,
+    f7List,
+    f7ListInput,
+    f7ListItem,
+    f7ListButton,
+    f7Block,
+    f7Input,
+    f7Button,
+    f7Popover,
+    f7Sheet,
+    f7PageContent
+} from 'framework7-vue';
 import { SevenPace } from '../sdk';
 
 const client = new SevenPace();
@@ -88,6 +155,12 @@ const code = ref('');
 const smsButtonText = ref('获取验证码');
 const smsButtonDisabled = ref(false);
 const countdown = ref(0);
+const tokenPopoverOpened = ref(false);
+const loginSheetOpened = ref(false);
+
+const openTokenPopover = () => {
+    tokenPopoverOpened.value = true;
+};
 
 // 倒计时函数
 const startCountdown = () => {
@@ -110,6 +183,7 @@ const updateToken = (event: Event) => {
     token.value = input.value;
     if (token.value) {
         client.setToken(token.value);
+        tokenPopoverOpened.value = false;
         f7.toast.show({
             text: 'Token已更新',
             position: 'center',
@@ -137,7 +211,7 @@ const getSmsCode = async () => {
 };
 
 // 登录
-const login = async () => {
+const handleLogin = async () => {
     if (!phone.value || !code.value) {
         f7.toast.show({
             text: '请输入手机号和验证码',
@@ -151,6 +225,7 @@ const login = async () => {
     showResult(success, message);
     if (success) {
         token.value = client.toDict().authorization.replace('Bearer ', '');
+        loginSheetOpened.value = false;
         f7.toast.show({
             text: '登录成功',
             position: 'center',
