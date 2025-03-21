@@ -28,7 +28,7 @@ tauri-plugin-log = "2"
 tauri-plugin-notification = "2"
 tauri-plugin-store = "2"
 tauri-plugin-geolocation = "2"
-tauri-plugin-http = { version = "2", features = ["unsafe-headers"] }
+tauri-plugin-http = { version = "2", features = ["unsafe-headers", "gzip", "native-tls"] }
 
 [profile.dev]
 incremental = true # 以较小的步骤编译您的二进制文件。

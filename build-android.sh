@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# 设置OpenSSL相关环境变量
+export OPENSSL_DIR="/opt/homebrew/Cellar/openssl@3/3.4.1"
+export OPENSSL_ROOT_DIR="/opt/homebrew/Cellar/openssl@3/3.4.1"
+export OPENSSL_INCLUDE_DIR="/opt/homebrew/Cellar/openssl@3/3.4.1/include"
+export OPENSSL_LIB_DIR="/opt/homebrew/Cellar/openssl@3/3.4.1/lib"
+export PKG_CONFIG_PATH="/opt/homebrew/Cellar/openssl@3/3.4.1/lib/pkgconfig:$PKG_CONFIG_PATH"
+
 # 设置默认target
 TARGET=${1:-"aarch64"}
 
