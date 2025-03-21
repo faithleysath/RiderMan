@@ -31,7 +31,8 @@ export class SevenPace {
       "sec-fetch-dest": "empty",
       "referer": "https://servicewechat.com/wx9a6a1a8407b04c5d/246/page-frame.html",
       "accept-encoding": "gzip, deflate, br",
-      "accept-language": "zh-CN,zh;q=0.9"
+      "accept-language": "zh-CN,zh;q=0.9",
+      "origin": "https://newmapi.7mate.cn",
     };
     this.expiredAt = expiredAt;
   }
